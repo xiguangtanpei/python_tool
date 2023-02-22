@@ -213,3 +213,17 @@ def  openHdrimage (file  ) :
     cv.imwrite (cus  , cus_im )
 
 # openHdrimage(file )
+
+
+
+def  readHdrPix (file , point ):
+    im = cv.imread(file   ,flags = cv.IMREAD_ANYDEPTH)  
+
+    wdith = ( im.shape)[1]
+    height = ( im.shape)[0]
+    
+    print ( im[point[1],point[0]])
+
+
+
+readHdrPix (file , [438 ,49 ] )

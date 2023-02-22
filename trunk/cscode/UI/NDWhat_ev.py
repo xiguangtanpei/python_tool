@@ -11,6 +11,8 @@ from PyQt6.QtGui import QImage ,QIcon ,QPicture,QPixmap
 import codepyc.camera.cal_ev as cev 
 
 
+
+
 class MyApp (QWidget) :
     def __init__(self) :
         super().__init__()
