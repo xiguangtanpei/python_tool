@@ -1,5 +1,7 @@
 
 import os 
+
+os.environ['OPENCV_IO_ENABLE_OPENEXR'] = '1'
 import cv2 as cv 
 import sys 
 import math 
@@ -165,6 +167,7 @@ def  printHdrPuls  (file  ) :
 
 # printHdrPuls(file )
 
+# 打开hdr 文件 去色并保存成 4中去色模式
 def  openHdrimage (file  ) :
     im = cv.imread(file   ,flags = cv.IMREAD_ANYDEPTH)  
 
@@ -216,14 +219,162 @@ def  openHdrimage (file  ) :
 
 
 
+
+
+
+
+
+
 def  readHdrPix (file , point ):
-    im = cv.imread(file   ,flags = cv.IMREAD_ANYDEPTH)  
+
+    #im = cv.imread(file   ,flags = cv.IMREAD_ANYDEPTH)  
+    im = cv.imread(file   ,-1)  
 
     wdith = ( im.shape)[1]
     height = ( im.shape)[0]
     
-    print ( im[point[1],point[0]])
+    rgb = ( im[point[1],point[0]])
+    print (rgb  )
+    # print ( rgb[0]  ==math.n  )
+
+# readHdrPix (file , [438 ,49 ] )
+
+# ==读取hdr 图形最大亮度 
+def  rendhdrMaxnum (flile ) :
+    # 按照亮度来返回处理 
+    im =cv.imread( file , -1 ) 
+    wdith = ( im.shape)[1]
+    height = ( im.shape)[0]
+    pix =[0,0,0]
+    lum =0 
+    ii =0 
+    jj = 0 
+    error = [] 
+    oop = get_hdri_lum ()
+    for i in range ( 0, height) :
+        for j in range (0, wdith):
+            newcolor = im[i,j ]
+            # print ( newcolor )
+
+
+            nor_color = oop.hdri_cus(newcolor) 
+            if  nor_color > lum :
+                lum = nor_color 
+                pix = newcolor 
+                ii = j 
+                jj = i 
+
+    print("打印最亮像素" )
+    print (pix )
+
+    print ("打印坐标")
+    print ( "[ {},{} ]".format ( str(ii) ,   str(jj))   )
+    # return pix 
 
 
 
-readHdrPix (file , [438 ,49 ] )
+
+# hdr 文件传入 +  亮度显示， 超过亮度 ，就同比例缩放到该亮度关系 
+# 写一个新文件 文件名称后缀clamp 
+def  openHdrimageWriteClampColor  (file , lums  ,minlums ) :
+    im = cv.imread(file   ,-1)  
+
+    exr_zhi = 65503.0
+    exr_num = 0.00001  
+
+    wdith = ( im.shape)[1]
+    height = ( im.shape)[0]
+    # ldr 是 0-255 所以要转 0-1 
+    pn =  os.path.dirname(file )
+    name =  os.path.splitext( (os.path.basename( file)))[0]
+    ppname = os.path.splitext( (os.path.basename( file)))[1]
+
+    cus =  pn +"\\"+ name+ "_Clamp" + str(lums) +"_"+str (minlums ) +ppname 
+
+
+    oop = get_hdri_lum()
+    cus_im = im.copy()
+
+    for i in range ( 0, height) :
+        for j in range (0, wdith):
+            newcolor = im[i,j ]
+            nor_color = newcolor
+            # 防止树枝出现inf nan   hdrexr 超出阈值会出现 
+            if nor_color[0] == math.inf  or  nor_color[0] == math.nan  :
+                nor_color[0] = exr_zhi # 波阈值小一点 
+            elif nor_color[1] == math.inf or  nor_color[0] == math.nan :
+                nor_color[1] =exr_zhi 
+            elif nor_color[2] ==math.inf  or  nor_color[0] == math.nan :
+                nor_color[2] = exr_zhi 
+
+            # 解负数无穷大  
+            if nor_color[0] == -math.inf  or  nor_color[0] == math.nan  :
+                nor_color[0] = exr_num # 波阈值小一点 
+                # print ("有负数")
+            elif nor_color[1] == -math.inf or  nor_color[0] == math.nan :
+                nor_color[1] =exr_num 
+                # print ("有负数")
+            elif nor_color[2] == -math.inf  or  nor_color[0] == math.nan :
+                nor_color[2] = exr_num 
+                # print ("有负数")
+
+
+            #计算像素的亮度 
+            cus_num  =   max (nor_color ) #### (oop.hdri_cus( nor_color  ))
+            # min_num  = min ( nor_color )
+            if lums != None :
+                if  cus_num > lums :
+                    # 同比例缩放 
+                    fenmu = max (nor_color )
+                    x = ((nor_color[0])/fenmu )*lums 
+                    y = ((nor_color[1])/fenmu )*lums 
+                    z= ((nor_color[2])/fenmu )*lums 
+                
+                    cus_im[i,j]  = [x,y,z ]
+            if minlums != None :
+                # 对于最小亮度提高 
+                if  cus_num < minlums :
+                    fenmu = max (nor_color )
+                    x = ((nor_color[0])/fenmu )*minlums 
+                    y = ((nor_color[1])/fenmu )*minlums 
+                    z= ((nor_color[2])/fenmu )*minlums 
+                
+                    cus_im[i,j]  = [x,y,z ]
+
+    # 写数据  
+
+    cv.imwrite (cus  , cus_im )
+
+
+
+
+
+
+#### 教程   
+#####  file 是hdr 文件 
+##### lums 是显示亮度， 输出新文件 并 后缀 clamp  
+##### minlums  传入最小树枝小于该数据就提亮   
+##### exr  经常会有截断问题范文出现无穷大 
+####### 什么都不能处理就 写None 
+# file = r'S:\hdr\2023\StandHdrpai\hdrone\converted\test_hdr_clamp\abs_srgb_Clamp200.exr'
+# openHdrimageWriteClampColor(file , None ,  3.0  )
+
+
+
+
+##### 教程 
+##### file hdr 文件 
+# #####  point 坐标 注意输入是 x y  横 竖  get 回来像素 注意不是rgb  而是 bgr   
+# file =r'S:\hdr\2023\StandHdrpai\hdrone\converted\test_hdr_clamp\abs_srgb.exr'
+# readHdrPix (file ,[1820,1780])
+
+
+
+
+
+##### 教程 
+#### file hdr exr 图形 
+##### 读取图形最大亮度 返回数据 
+# file =r'S:\hdr\2023\StandHdrpai\hdrone\converted\test_hdr_clamp\abs_srgb_Clamp500.exr'
+# rendhdrMaxnum (file )
+
