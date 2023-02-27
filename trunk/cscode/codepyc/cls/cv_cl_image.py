@@ -1,7 +1,7 @@
 
 import os 
 
-os.environ['OPENCV_IO_ENABLE_OPENEXR'] = '1'
+
 import cv2 as cv 
 import sys 
 import math 
@@ -266,6 +266,8 @@ def  rendhdrMaxnum (flile ) :
 
     print("打印最亮像素" )
     print (pix )
+    print ("最大亮度" )
+    print ( lum )
 
     print ("打印坐标")
     print ( "[ {},{} ]".format ( str(ii) ,   str(jj))   )
@@ -288,8 +290,9 @@ def  openHdrimageWriteClampColor  (file , lums  ,minlums ) :
     pn =  os.path.dirname(file )
     name =  os.path.splitext( (os.path.basename( file)))[0]
     ppname = os.path.splitext( (os.path.basename( file)))[1]
-
-    cus =  pn +"\\"+ name+ "_Clamp" + str(lums) +"_"+str (minlums ) +ppname 
+    o1 = str(lums).replace('.','D')
+    o2 =  str(minlums).replace('.','D')
+    cus =  pn +"\\"+ name+ "_Clamp_" +o1 +"_"+ o2  +ppname 
 
 
     oop = get_hdri_lum()
@@ -356,8 +359,8 @@ def  openHdrimageWriteClampColor  (file , lums  ,minlums ) :
 ##### minlums  传入最小树枝小于该数据就提亮   
 ##### exr  经常会有截断问题范文出现无穷大 
 ####### 什么都不能处理就 写None 
-# file = r'S:\hdr\2023\StandHdrpai\hdrone\converted\test_hdr_clamp\abs_srgb_Clamp200.exr'
-# openHdrimageWriteClampColor(file , None ,  3.0  )
+# file =r'S:\hdr\2023\StandHdrpai\hdrtwo\converted\beifen\ChuangYiZ1202302201054_Abs2D11_sunOff_Srgb.exr'
+# openHdrimageWriteClampColor(file , 20.0,  None  )
 
 
 
@@ -375,6 +378,8 @@ def  openHdrimageWriteClampColor  (file , lums  ,minlums ) :
 ##### 教程 
 #### file hdr exr 图形 
 ##### 读取图形最大亮度 返回数据 
-# file =r'S:\hdr\2023\StandHdrpai\hdrone\converted\test_hdr_clamp\abs_srgb_Clamp500.exr'
+
+# file =r'S:\hdr\2023\StandHdrpai\hdrtwo\converted\ChuangYiZ1202302201054_Abs2D11_sunOff_Srgb.hdr'
+
 # rendhdrMaxnum (file )
 
