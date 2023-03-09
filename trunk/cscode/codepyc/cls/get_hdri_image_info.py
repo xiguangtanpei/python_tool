@@ -7,8 +7,8 @@ import os
 import cv2 as cv 
 import numpy as np 
 
-from  codepyc.cls.get_hdri_lum import get_hdri_lum 
-import codepyc.cls.get_hdri_lum 
+from  cscode.codepyc.cls.get_hdri_lum import get_hdri_lum 
+import cscode.codepyc.cls.get_hdri_lum 
 import math
 
 

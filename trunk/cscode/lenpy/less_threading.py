@@ -123,7 +123,7 @@ class PhotoP  ( threading.Thread):
         # print ( "exiting : " + self.name )
 
 
-file = r'S:\feature-render-Pake\test\1'
+file = r'S:\feature-render-Pake\test\2'
 # print (time.ctime(time.time()))
 ioo=0
 totofiles = []

@@ -10,7 +10,8 @@ from PyQt6.QtGui import QImage ,QIcon ,QPicture,QPixmap
 
 
 
-from codepyc.cls.get_hdri_image_info import get_hdri_image_info 
+# from cscode.codepyc.cls.get_hdri_image_info import get_hdri_image_info 
+from cscode.codepyc.cls.get_hdri_image_info import get_hdri_image_info 
 
 
 import time 
