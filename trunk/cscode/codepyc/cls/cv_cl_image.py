@@ -1,10 +1,14 @@
 
 import os 
-
+os.environ["OPENCV_IO_ENABLE_OPENEXR"] = 'True'
 
 import cv2 as cv 
 import sys 
+
+
+
 import math 
+
 
 # 读写 ldr hdr 图像计算并保存  
 
@@ -79,7 +83,7 @@ def  openldrimage (file  ) :
 
 
 
-file = r'S:\hdr\2023\test\ChuangYiZ1202302201019_Abs2D3_sunOff_Srgb.hdr'
+# file = r'S:\hdr\2023\test\ChuangYiZ1202302201019_Abs2D3_sunOff_Srgb.hdr'
 
 # openldrimage(file  )
 
@@ -274,6 +278,18 @@ def  rendhdrMaxnum (flile ) :
     # return pix 
 
 
+def imagedata  ( file , heightnum ) :
+    im =cv.imread( file , -1 ) 
+    wdith = ( im.shape)[1]
+    height = ( im.shape)[0]
+    pix =[0,0,0]
+    lum =0 
+    ii =0 
+    jj = 0 
+    error = [] 
+    print ( im[heightnum , 0:wdith ])
+
+
 
 
 # hdr 文件传入 +  亮度显示， 超过亮度 ，就同比例缩放到该亮度关系 
@@ -347,6 +363,17 @@ def  openHdrimageWriteClampColor  (file , lums  ,minlums ) :
     # 写数据  
 
     cv.imwrite (cus  , cus_im )
+
+
+
+
+#### 教程 
+#### 教程 
+#####  file 是hdr 文件 
+#####    heightnum  这个是 使用高度 第几行， 返回最终的数据 
+# file =r'S:\hdr\2023\StandHdrpai\hdrtwo\converted\beifen\ChuangYiZ1202302201054_Abs2D11_sunOff_Srgb.exr'
+# imagedata (file , 1 )
+
 
 
 
